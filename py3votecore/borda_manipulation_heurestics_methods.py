@@ -5,7 +5,9 @@
 # 
 # 
 
-def AverageFit(ballots: dict, candidate: str, k: int, tie_breaker=None)->bool:
+from py3votecore.borda import Borda
+
+def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     """
     "Complexity of and Algorithms for Borda Manipulation", by Jessica Davies, George Katsirelos, Nina Narodytska and Toby Walsh(2011),
     https://ojs.aaai.org/index.php/AAAI/article/view/7873
@@ -30,9 +32,60 @@ def AverageFit(ballots: dict, candidate: str, k: int, tie_breaker=None)->bool:
         {"count": 1, "ballot": ["g","b","c","f","e","h","d","a"]}, {"count": 1, "ballot": ["f","a","c","b","e","h","g","d"]}, {"count": 1, "ballot": ["h","g","a","f","d","e","b","c"]}, {"count": 1, "ballot": ["h","g","b","f","e","a","c","d"]}], "d", 4, ["d", "c", "b", "a"])
     False
     """
-    return 0
 
-def LargestFit(ballots: dict, candidate: str, k: int, tie_breaker=None)->bool:
+    candidates = {c:0 for c in ballots[0]["ballot"]}
+    m = len(candidates)
+    scores_to_give = {i:k for i in range(m-1)}
+    highest_score_to_give = m-2
+    honest_voters = Borda(ballots)
+    scores = Borda(ballots).as_dict()["tallies"]
+    scores[candidate] += (k*(m-1))
+    for c in scores:
+        if scores[c] > scores[candidate]:
+            return False
+    gap = {}
+    for c in scores.keys():
+        if c != candidate:
+            gap[c] = scores[candidate] - scores[c]
+            if gap[c] < 0:
+                return False
+    for i in range(k*(m - 2), -1, -1):
+        # for j in range(k, 0, -1):
+        given_score = False
+        sorted(gap.items(), key=lambda item: candidates[item[0]], reverse = True)
+        for c,v in sorted(gap.items(), key=lambda item: item[1], reverse = True):
+            if candidates[c]<k:
+                score_to_give = highest_score_to_give
+                if scores[candidate] <= score_to_give + scores[c]:
+                    score_to_give = scores[candidate] - scores[c]
+                    if score_to_give < 0:
+                        return False
+                    if scores_to_give[score_to_give] == 0:
+                        no_score_to_give = True
+                        for k in range(score_to_give, -1, -1):
+                            if scores_to_give[k] != 0:
+                                score_to_give = k
+                                no_score_to_give = False
+                                break
+                        if no_score_to_give:
+                            return False                          
+                if scores[candidate] >= score_to_give + scores[c]:
+                    scores[c] += score_to_give
+                    candidates[c] += 1
+                    gap[c] = (scores[candidate] - scores[c])/(k - candidates[c])
+                    scores_to_give[score_to_give] -= 1
+                    if scores_to_give[score_to_give] == 0:
+                        for k in range(highest_score_to_give, -1, -1):
+                            if scores_to_give[score_to_give] != 0:
+                                highest_score_to_give = k
+                    given_score = True
+                    break
+        if given_score:
+            break
+    return True
+
+
+def LargestFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     """
     "Complexity of and Algorithms for Borda Manipulation", by Jessica Davies, George Katsirelos, Nina Narodytska and Toby Walsh(2011),
     https://ojs.aaai.org/index.php/AAAI/article/view/7873
@@ -59,5 +112,30 @@ def LargestFit(ballots: dict, candidate: str, k: int, tie_breaker=None)->bool:
 
     """
 
-    return 0
+    candidates = {c:0 for c in ballots[0]["ballot"]}
+    m = len(candidates)
+    honest_voters = Borda(ballots)
+    scores = Borda(ballots).as_dict()["tallies"]
+    scores[candidate] += (k*(m-1))
+    for c in scores:
+        if scores[c] > scores[candidate]:
+            return False
+    gap = {}
+    for c in scores.keys():
+        if c != candidate:
+            gap[c] = scores[candidate] - scores[c]
+            if gap[c] < 0:
+                return False
+
+    for i in range(m - 2, -1, -1):
+        for j in range(k, 0, -1):
+            for c,v in sorted(gap.items(), key=lambda item: item[1], reverse = True):
+                if v - i < 0: 
+                    return False
+                elif candidates[c]<k:
+                    gap[c] = v - i
+                    scores[c] += i
+                    candidates[c] += 1
+                    break
+    return True
 

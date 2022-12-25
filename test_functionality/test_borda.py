@@ -21,7 +21,7 @@ class TestBorda(unittest.TestCase):
         self.assertEqual(output, {
             'candidates': set(['c1', 'c2', 'c3']),
             'tallies': {'c3': 46, 'c2': 93, 'c1': 74},
-            'winner': 'c1'
+            'winner': 'c2'
         })
 
     # Borda, irrelevant ties
