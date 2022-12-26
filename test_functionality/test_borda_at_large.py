@@ -41,7 +41,7 @@ class TestBordaAtLarge(unittest.TestCase):
             'tallies': {'c3': 173, 'c2': 230, 'c1': 230, 'c5': 88, 'c4': 129},
             'winners': set(['c2', 'c1'])
         })
-        # self.assertEqual(output["tied_winners"], set(['c2', 'c1']))
+
 
     # Borda at Large, irrelevant ties
     def test_borda_at_large_irrelevant_ties_low(self):
@@ -59,7 +59,6 @@ class TestBordaAtLarge(unittest.TestCase):
         print(output)
         # Run tests
         self.assertEqual(output["tallies"], {'c3': 110, 'c2': 110, 'c1': 160, 'c4': 148})
-        # self.assertEqual(len(output["tie_breaker"]), 4)
         self.assertEqual(output['winners'], set(['c4', 'c1']))
         self.assertEqual(len(output), 3)
 
@@ -67,7 +66,6 @@ class TestBordaAtLarge(unittest.TestCase):
     def test_borda_at_large_relevant_ties(self):
 
 
-        # Check these tests!!!!!!!!!
         # Generate data
         output = BordaAtLarge([
             {"count": 30, "ballot": ["c1", "c4", "c2", "c3"]},

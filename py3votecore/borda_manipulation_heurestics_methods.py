@@ -7,6 +7,30 @@
 
 from py3votecore.borda import Borda
 
+def find_possible_score(scores: dict, scores_to_give: dict, candidate: str, c: str, highest_score_to_give: int):
+    score_to_give = highest_score_to_give
+    if scores[candidate] <= score_to_give + scores[c]:
+        score_to_give = scores[candidate] - scores[c]
+        if score_to_give < 0:
+            return False
+        if scores_to_give[score_to_give] == 0:
+            no_score_to_give = True
+            for k in range(score_to_give, -1, -1):
+                if scores_to_give[k] != 0:
+                    score_to_give = k
+                    no_score_to_give = False
+                    break
+            if no_score_to_give:
+                return False
+    return score_to_give
+
+def update_highest_score_to_give(scores_to_give :dict, highest_score_to_give: int, score_to_give: int):
+    if highest_score_to_give == score_to_give and scores_to_give[score_to_give] == 0:
+        for k in range(highest_score_to_give, -1, -1):
+            if scores_to_give[score_to_give] != 0:
+                return k
+    return highest_score_to_give
+
 def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     """
     "Complexity of and Algorithms for Borda Manipulation", by Jessica Davies, George Katsirelos, Nina Narodytska and Toby Walsh(2011),
@@ -37,7 +61,6 @@ def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     m = len(candidates)
     scores_to_give = {i:k for i in range(m-1)}
     highest_score_to_give = m-2
-    honest_voters = Borda(ballots)
     scores = Borda(ballots).as_dict()["tallies"]
     scores[candidate] += (k*(m-1))
     for c in scores:
@@ -50,38 +73,24 @@ def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
             if gap[c] < 0:
                 return False
     for i in range(k*(m - 2), -1, -1):
-        # for j in range(k, 0, -1):
-        given_score = False
+        exists_given_score = False
         sorted(gap.items(), key=lambda item: candidates[item[0]], reverse = True)
         for c,v in sorted(gap.items(), key=lambda item: item[1], reverse = True):
             if candidates[c]<k:
-                score_to_give = highest_score_to_give
-                if scores[candidate] <= score_to_give + scores[c]:
-                    score_to_give = scores[candidate] - scores[c]
-                    if score_to_give < 0:
-                        return False
-                    if scores_to_give[score_to_give] == 0:
-                        no_score_to_give = True
-                        for k in range(score_to_give, -1, -1):
-                            if scores_to_give[k] != 0:
-                                score_to_give = k
-                                no_score_to_give = False
-                                break
-                        if no_score_to_give:
-                            return False                          
-                if scores[candidate] >= score_to_give + scores[c]:
-                    scores[c] += score_to_give
-                    candidates[c] += 1
-                    gap[c] = (scores[candidate] - scores[c])/(k - candidates[c])
-                    scores_to_give[score_to_give] -= 1
-                    if scores_to_give[score_to_give] == 0:
-                        for k in range(highest_score_to_give, -1, -1):
-                            if scores_to_give[score_to_give] != 0:
-                                highest_score_to_give = k
-                    given_score = True
-                    break
-        if given_score:
-            break
+                
+                score_to_give = find_possible_score(scores, scores_to_give, candidate, c, highest_score_to_give)
+                if not score_to_give:
+                    return False
+                scores[c] += score_to_give
+                candidates[c] += 1
+                gap[c] = (scores[candidate] - scores[c])/(k - candidates[c]) if candidates[c] != k else 0
+                scores_to_give[score_to_give] -= 1
+                
+                highest_score_to_give = update_highest_score_to_give(scores_to_give, highest_score_to_give, score_to_give)
+                exists_given_score = True
+                break
+            if exists_given_score:
+                break
     return True
 
 
@@ -114,7 +123,6 @@ def LargestFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
 
     candidates = {c:0 for c in ballots[0]["ballot"]}
     m = len(candidates)
-    honest_voters = Borda(ballots)
     scores = Borda(ballots).as_dict()["tallies"]
     scores[candidate] += (k*(m-1))
     for c in scores:
