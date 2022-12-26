@@ -31,6 +31,15 @@ def update_highest_score_to_give(scores_to_give :dict, highest_score_to_give: in
                 return k
     return highest_score_to_give
 
+def create_gap_dic(scores: dict, candidate: str):
+    gap = {}
+    for c in scores.keys():
+        if c != candidate:
+            gap[c] = scores[candidate] - scores[c]
+            if gap[c] < 0:
+                return False
+    return gap
+
 def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     """
     "Complexity of and Algorithms for Borda Manipulation", by Jessica Davies, George Katsirelos, Nina Narodytska and Toby Walsh(2011),
@@ -63,15 +72,9 @@ def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     highest_score_to_give = m-2
     scores = Borda(ballots).as_dict()["tallies"]
     scores[candidate] += (k*(m-1))
-    for c in scores:
-        if scores[c] > scores[candidate]:
-            return False
-    gap = {}
-    for c in scores.keys():
-        if c != candidate:
-            gap[c] = scores[candidate] - scores[c]
-            if gap[c] < 0:
-                return False
+    gap = create_gap_dic(scores, candidate)
+    if not gap:
+        return False
     for i in range(k*(m - 2), -1, -1):
         exists_given_score = False
         sorted(gap.items(), key=lambda item: candidates[item[0]], reverse = True)
@@ -125,16 +128,9 @@ def LargestFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     m = len(candidates)
     scores = Borda(ballots).as_dict()["tallies"]
     scores[candidate] += (k*(m-1))
-    for c in scores:
-        if scores[c] > scores[candidate]:
-            return False
-    gap = {}
-    for c in scores.keys():
-        if c != candidate:
-            gap[c] = scores[candidate] - scores[c]
-            if gap[c] < 0:
-                return False
-
+    gap = create_gap_dic(scores, candidate)
+    if not gap:
+        return False
     for i in range(m - 2, -1, -1):
         for j in range(k, 0, -1):
             for c,v in sorted(gap.items(), key=lambda item: item[1], reverse = True):
