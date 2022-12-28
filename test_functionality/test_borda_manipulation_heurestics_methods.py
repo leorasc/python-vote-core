@@ -32,7 +32,7 @@ class TestAverageFit(unittest.TestCase):
         output = AverageFit(ballots=input, candidate="d", k=8, tie_breaker=["d","c","b","a"])
 
         # Run test
-        self.assertFalse(output)
+        self.assertTrue(output)
 
     # Borda
     def test_4_candidate_manipulation(self):
@@ -44,7 +44,7 @@ class TestAverageFit(unittest.TestCase):
         output = AverageFit(ballots=input, candidate="d", k=5, tie_breaker=["d", "c", "b", "a"])
 
         # Run tests
-        self.assertFalse(output)
+        self.assertTrue(output)
 
 class TestLargestFit(unittest.TestCase):
 

@@ -1,7 +1,7 @@
 
 
-from py3votecore.abstract_classes import MultipleWinnerVotingSystem
-from py3votecore.common_functions import matching_keys, unique_permutations
+from .abstract_classes import MultipleWinnerVotingSystem
+from .common_functions import matching_keys, unique_permutations
 import copy
 
 class BordaAtLarge(MultipleWinnerVotingSystem):

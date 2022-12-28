@@ -5,7 +5,7 @@
 # 
 # 
 
-from py3votecore.borda import Borda
+from .borda import Borda
 import logging
 
 
@@ -28,15 +28,13 @@ def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     >>> AverageFit([{"count": 1, "ballot": ["b","d","c","a"]}, {"count": 1, "ballot": ["b","c","a","d"]}, {"count": 1, "ballot": ["b","a","d","c"]}, {"count": 1, "ballot": ["a","c","d","b"]}], "d", 2, ["d", "c", "b", "a"])
     True
     
-    >>> AverageFit([{"count": 1, "ballot": ["a","b","c","d","e","f","g","h"]}, {"count": 1, "ballot": ["a","b","c","e","d","f","g","h"]}, {"count": 1, "ballot": ["a","b","e","c","f","g","h","d"]}, {"count": 1, "ballot": ["a","h","c","e","d","g","f","b"]}, 
-        {"count": 1, "ballot": ["g","b","c","f","e","h","d","a"]}, {"count": 1, "ballot": ["f","a","c","b","e","h","g","d"]}, {"count": 1, "ballot": ["h","g","a","f","d","e","b","c"]}, {"count": 1, "ballot": ["h","g","b","f","e","a","c","d"]}], "d", 5, ["d", "c", "b", "a"])
+    >>> AverageFit([{"count": 1, "ballot": ["a","b","c","d","e","f","g","h"]}, {"count": 1, "ballot": ["a","b","c","e","d","f","g","h"]}, {"count": 1, "ballot": ["a","b","e","c","f","g","h","d"]}, {"count": 1, "ballot": ["a","h","c","e","d","g","f","b"]}, {"count": 1, "ballot": ["g","b","c","f","e","h","d","a"]}, {"count": 1, "ballot": ["f","a","c","b","e","h","g","d"]}, {"count": 1, "ballot": ["h","g","a","f","d","e","b","c"]}, {"count": 1, "ballot": ["h","g","b","f","e","a","c","d"]}], "d", 5, ["d", "c", "b", "a"])
     True
-    >>> AverageFit([{"count": 1, "ballot": ["a","b","c","d","e","f","g","h"]}, {"count": 1, "ballot": ["a","b","c","e","d","f","g","h"]}, {"count": 1, "ballot": ["a","b","e","c","f","g","h","d"]}, {"count": 1, "ballot": ["a","h","c","e","d","g","f","b"]}, 
-        {"count": 1, "ballot": ["g","b","c","f","e","h","d","a"]}, {"count": 1, "ballot": ["f","a","c","b","e","h","g","d"]}, {"count": 1, "ballot": ["h","g","a","f","d","e","b","c"]}, {"count": 1, "ballot": ["h","g","b","f","e","a","c","d"]}], "d", 4, ["d", "c", "b", "a"])
+    >>> AverageFit([{"count": 1, "ballot": ["a","b","c","d","e","f","g","h"]}, {"count": 1, "ballot": ["a","b","c","e","d","f","g","h"]}, {"count": 1, "ballot": ["a","b","e","c","f","g","h","d"]}, {"count": 1, "ballot": ["a","h","c","e","d","g","f","b"]}, {"count": 1, "ballot": ["g","b","c","f","e","h","d","a"]}, {"count": 1, "ballot": ["f","a","c","b","e","h","g","d"]}, {"count": 1, "ballot": ["h","g","a","f","d","e","b","c"]}, {"count": 1, "ballot": ["h","g","b","f","e","a","c","d"]}], "d", 4, ["d", "c", "b", "a"])
     False
     """
     # create and configure logger
-    logging.basicConfig(filename= 'my_logging.log', level= logging.DEBUG)
+    logging.basicConfig(filename= 'my_logging.log', level= logging.INFO)
     logger = logging.getLogger()
 
     candidates = {c:0 for c in ballots[0]["ballot"]}    # Dictionary of candidates and amount of times the manipulators have placed each candidate.
@@ -49,14 +47,14 @@ def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     if not gap:     # If gap is False, then there exists a candidate c, that has a higher score than candidate the manipulators, and therefore, the algorithm returns False.
         return False
     for i in range(k*(m - 1)):      # Number of scores to give to the candidates.
-        logger.debug((k*(m - 1) - i), 'th time giving score', exc_info=1)
+        logger.debug('th time giving score')
         exists_given_score = False
         sorted(gap.items(), key=lambda item: candidates[item[0]], reverse = True)
         for c,v in sorted(gap.items(), key=lambda item: item[1], reverse = True):   # Sort according to the largest average gap.
             if candidates[c]<k:
                 
                 score_to_give = find_possible_score(scores, scores_to_give, candidate, c, highest_score_to_give)
-                if not score_to_give:   # If there is no possible score that is possible to give c, AverageFit returns False.
+                if score_to_give == -1:   # If there is no possible score that is possible to give c, AverageFit returns False.
                     return False
                 scores[c] += score_to_give
                 candidates[c] += 1
@@ -82,18 +80,16 @@ def LargestFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     
     Programmer: Leora Schmerler
 
-    >>> LargestFit([{"count": 1, "ballot": ["c","a","b","d"]}, {"count": 1, "ballot": ["b","c","a","d"]}], "d", 2, ["d", "c", "b", "a"])
+    >>> LargestFit([{"count": 1, "ballot": ["c","a","b","d"]}, {"count": 1, "ballot": ["b","c","a","d"]}], "d", 2, ["d", "c", "b", "a"]) 
     True
     >>> LargestFit([{"count": 1, "ballot": ["c","b","d","a"]}, {"count": 1, "ballot": ["b","c","a","d"]}, {"count": 1, "ballot": ["b","a","d","c"]}], "d", 2, ["d", "c", "b", "a"])
     True
     >>> LargestFit([{"count": 1, "ballot": ["b","d","c","a"]}, {"count": 1, "ballot": ["b","c","a","d"]}, {"count": 1, "ballot": ["b","a","d","c"]}, {"count": 1, "ballot": ["a","c","d","b"]}], "d", 2, ["d", "c", "b", "a"])
     True
     
-    >>> LargestFit([{"count": 1, "ballot": ["a","b","c","d","e","f","g","h"]}, {"count": 1, "ballot": ["a","b","c","e","d","f","g","h"]}, {"count": 1, "ballot": ["a","b","e","c","f","g","h","d"]}, {"count": 1, "ballot": ["a","h","c","e","d","g","f","b"]}, 
-        {"count": 1, "ballot": ["g","b","c","f","e","h","d","a"]}, {"count": 1, "ballot": ["f","a","c","b","e","h","g","d"]}, {"count": 1, "ballot": ["h","g","a","f","d","e","b","c"]}, {"count": 1, "ballot": ["h","g","b","f","e","a","c","d"]}], "d", 5, ["d", "c", "b", "a"])
+    >>> LargestFit([{"count": 1, "ballot": ["a","b","c","d","e","f","g","h"]}, {"count": 1, "ballot": ["a","b","c","e","d","f","g","h"]}, {"count": 1, "ballot": ["a","b","e","c","f","g","h","d"]}, {"count": 1, "ballot": ["a","h","c","e","d","g","f","b"]}, {"count": 1, "ballot": ["g","b","c","f","e","h","d","a"]}, {"count": 1, "ballot": ["f","a","c","b","e","h","g","d"]}, {"count": 1, "ballot": ["h","g","a","f","d","e","b","c"]}, {"count": 1, "ballot": ["h","g","b","f","e","a","c","d"]}], "d", 5, ["d", "c", "b", "a"]) 
     True
-    >>> LargestFit([{"count": 1, "ballot": ["a","b","c","d","e","f","g","h"]}, {"count": 1, "ballot": ["a","b","c","e","d","f","g","h"]}, {"count": 1, "ballot": ["a","b","e","c","f","g","h","d"]}, {"count": 1, "ballot": ["a","h","c","e","d","g","f","b"]}, 
-        {"count": 1, "ballot": ["g","b","c","f","e","h","d","a"]}, {"count": 1, "ballot": ["f","a","c","b","e","h","g","d"]}, {"count": 1, "ballot": ["h","g","a","f","d","e","b","c"]}, {"count": 1, "ballot": ["h","g","b","f","e","a","c","d"]}], "d", 4, ["d", "c", "b", "a"])
+    >>> LargestFit([{"count": 1, "ballot": ["a","b","c","d","e","f","g","h"]}, {"count": 1, "ballot": ["a","b","c","e","d","f","g","h"]}, {"count": 1, "ballot": ["a","b","e","c","f","g","h","d"]}, {"count": 1, "ballot": ["a","h","c","e","d","g","f","b"]}, {"count": 1, "ballot": ["g","b","c","f","e","h","d","a"]}, {"count": 1, "ballot": ["f","a","c","b","e","h","g","d"]}, {"count": 1, "ballot": ["h","g","a","f","d","e","b","c"]}, {"count": 1, "ballot": ["h","g","b","f","e","a","c","d"]}], "d", 4, ["d", "c", "b", "a"]) 
     True
 
     """
@@ -129,13 +125,15 @@ def find_possible_score(scores: dict, scores_to_give: dict, candidate: str, c: s
     >>> find_possible_score({"C": 91, "Carle": 80, "Barak": 92, "Diana": 77, "Rachel":88}, {0: 4, 1: 4, 2: 4, 3: 0, 4: 1}, "Barak", "C", 4)
     1
     >>> find_possible_score({"A": 91, "B": 80, "C": 98, "D": 77, "E": 88, "F": 87, "G": 89, "H": 99}, {0: 0, 1: 0, 2: 1, 3: 0, 4: 1}, "H", "C", 4)
-    False
+    -1
+    >>> find_possible_score({'b': 6, 'c': 6, 'd': 6, 'a': 6}, {0: 2, 1: 0, 2: 0}, 'd', 'b', 0)
+    0
     """
     score_to_give = highest_score_to_give
     if scores[candidate] <= score_to_give + scores[c]:
         score_to_give = scores[candidate] - scores[c]   # The highest score c can get, since it is smaller that the highest avialable one.
         if score_to_give < 0:
-            return False
+            return -1
         if scores_to_give[score_to_give] == 0:
             no_score_to_give = True
             for k in range(score_to_give, -1, -1):
@@ -144,7 +142,7 @@ def find_possible_score(scores: dict, scores_to_give: dict, candidate: str, c: s
                     no_score_to_give = False
                     break
             if no_score_to_give:
-                return False
+                return -1
     return score_to_give
 
 def update_highest_score_to_give(scores_to_give :dict, highest_score_to_give: int):
@@ -159,10 +157,12 @@ def update_highest_score_to_give(scores_to_give :dict, highest_score_to_give: in
     2
     >>> update_highest_score_to_give({0: 0, 1: 0, 2: 0, 3: 0, 4: 0}, 4)
     4
+    >>> update_highest_score_to_give({0: 2, 1: 0, 2: 0}, 1)
+    0
     """
     if scores_to_give[highest_score_to_give] == 0:      # If giving a candidate the highest possible and therefore that score is not possible anymore.
         for k in range(highest_score_to_give, -1, -1):
-            if scores_to_give[highest_score_to_give] != 0:
+            if scores_to_give[k] != 0:
                 return k
     return highest_score_to_give
 
@@ -172,12 +172,12 @@ def create_gap_dic(scores: dict, candidate: str, k: int):
     the manipulators want her to win. The function constructs and outputs a dict of gaps of each candidate c, to the candidate the manipulators 
     want to win. When the algorithm that calls this function is LargestFit, then the gap is the difference between the scores. Otherwise, the gap in AverageFit,
     is an average gap.
-    >>> create_gap_dic({"A": 91, "B": 80, "C": 98, "D": 77, "E": 88, "F": 87, "G": 89, "H": 99}, "H", 1)
-    {"A": 8, "B": 19, "C": 1, "D": 22, "E": 11, "F": 12, "G": 10}
-    >>> create_gap_dic({"A": 100, "B": 80, "C": 98, "D": 77, "E": 88, "F": 87, "G": 89, "H": 99}, "A", 2)
-    {"B": 10, "C": 1, "D": 11.5, "E": 6, "F": 6.5, "G": 5.5, "H": 0.5}
-    >>> create_gap_dic({"A": 91, "B": 102, "C": 98, "D": 77, "E": 88, "F": 87, "G": 89, "H": 99}, "B", 5)
-    {"A": 2.2, "C": 0.8, "D": 5, "E": 2.8, "F": 3, "G": 2.6, "H": 0.6}
+    >>> create_gap_dic({"A": 91, "B": 80, "C": 98, "D": 77, "E": 88, "F": 87, "G": 89, "H": 99}, "H", 1)  #doctest: +NORMALIZE_WHITESPACE
+    {'A': 8.0, 'B': 19.0, 'C': 1.0, 'D': 22.0, 'E': 11.0, 'F': 12.0, 'G': 10.0}
+    >>> create_gap_dic({"A": 100, "B": 80, "C": 98, "D": 77, "E": 88, "F": 87, "G": 89, "H": 99}, "A", 2)  #doctest: +NORMALIZE_WHITESPACE
+    {'B': 10.0, 'C': 1.0, 'D': 11.5, 'E': 6.0, 'F': 6.5, 'G': 5.5, 'H': 0.5}
+    >>> create_gap_dic({"A": 91, "B": 102, "C": 98, "D": 77, "E": 88, "F": 87, "G": 89, "H": 99}, "B", 5)  #doctest: +NORMALIZE_WHITESPACE
+    {'A': 2.2, 'C': 0.8, 'D': 5.0, 'E': 2.8, 'F': 3.0, 'G': 2.6, 'H': 0.6}
     """
     gap = {}
     for c in scores.keys():

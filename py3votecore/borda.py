@@ -1,7 +1,7 @@
 
 
-from py3votecore.abstract_classes import AbstractSingleWinnerVotingSystem
-from py3votecore.borda_at_large import BordaAtLarge
+from .abstract_classes import AbstractSingleWinnerVotingSystem
+from .borda_at_large import BordaAtLarge
 
 class Borda(AbstractSingleWinnerVotingSystem):
 
