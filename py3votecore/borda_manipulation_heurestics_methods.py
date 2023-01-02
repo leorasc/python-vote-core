@@ -48,11 +48,9 @@ def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
         return False
     for i in range(k*(m - 1)):      # Number of scores to give to the candidates.
         logger.debug('th time giving score')
-        exists_given_score = False
         sorted(gap.items(), key=lambda item: candidates[item[0]], reverse = True)
         for c,v in sorted(gap.items(), key=lambda item: item[1], reverse = True):   # Sort according to the largest average gap.
             if candidates[c]<k:
-                
                 score_to_give = find_possible_score(scores, scores_to_give, candidate, c, highest_score_to_give)
                 if score_to_give == -1:   # If there is no possible score that is possible to give c, AverageFit returns False.
                     return False
@@ -62,9 +60,6 @@ def AverageFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
                 scores_to_give[score_to_give] -= 1
                 
                 highest_score_to_give = update_highest_score_to_give(scores_to_give, highest_score_to_give)
-                exists_given_score = True
-                break
-            if exists_given_score:      # There was given a score in this iteration, then AverageFit continues to the next iteratin.
                 break
     return True
 
@@ -104,9 +99,9 @@ def LargestFit(ballots: list, candidate: str, k: int, tie_breaker=None)->bool:
     for i in range(m - 2, -1, -1):      # The score given in the current iteration.
         for j in range(k, 0, -1):       # The relaxed manipulator giving that score.
             for c,v in sorted(gap.items(), key=lambda item: item[1], reverse = True):
-                if v - i < 0:       # If we add to c the score of i and it overtakes the score of candidate, LargestFit return False.
-                    return False
-                elif candidates[c]<k:   # If c was not placed k times yet, LargestFit gives c i points, and updates the number of times it was placed, the gap and the score. 
+                if candidates[c]<k:   # If c was not placed k times yet, LargestFit gives c i points, and updates the number of times it was placed, the gap and the score. 
+                    if v - i < 0:       # If we add to c the score of i and it overtakes the score of candidate, LargestFit return False.
+                        return False
                     gap[c] = v - i
                     scores[c] += i
                     candidates[c] += 1
