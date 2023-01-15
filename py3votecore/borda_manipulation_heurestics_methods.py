@@ -5,8 +5,7 @@
 # 
 # 
 #
-
-from py3votecore.borda import Borda
+from .borda import Borda
 import networkx as nx
 
 
@@ -16,7 +15,7 @@ def AverageFit(ballots: list, preferred_candidate: str, k: int)->list or bool:
     https://ojs.aaai.org/index.php/AAAI/article/view/7873
 
     AverageFit: accepts ballots of voters, a number of manipulators, k, that try to manipulate their vote in order that thier preferred 
-    candidate will be elected by the Borda voting rule, with a tie-breaker, if recieved one. The algorithm outputs true if it succeeds 
+    candidate will be elected by the Borda voting rule, tie-breaks in faver of the preferred_candidate. The algorithm outputs true if it succeeds 
     to find such manipulation, and false otherwise.
     
     Programmer: Leora Schmerler
@@ -71,7 +70,7 @@ def LargestFit(ballots: list, preferred_candidate: str, k: int)->list or bool:
     https://ojs.aaai.org/index.php/AAAI/article/view/7873
 
     LargestFit: accepts ballots of voters, a number of manipulators, k, that try to manipulate their vote in order that thier preferred 
-    candidate will be elected by the Borda voting rule, with a tie-breaker, if recieved one. The algorithm outputs true if it succeeds 
+    candidate will be elected by the Borda voting rule, tie-breaks in faver of the preferred_candidate. The algorithm outputs true if it succeeds 
     to find such manipulation, and false otherwise.
     
     Programmer: Leora Schmerler
