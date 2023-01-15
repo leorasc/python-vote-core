@@ -8,7 +8,6 @@
 from .borda import Borda
 import networkx as nx
 
-
 def AverageFit(ballots: list, preferred_candidate: str, k: int)->list or bool:
     """
     "Complexity of and Algorithms for Borda Manipulation", by Jessica Davies, George Katsirelos, Nina Narodytska and Toby Walsh(2011),
