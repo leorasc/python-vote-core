@@ -18,7 +18,7 @@ class TestAverageFit(unittest.TestCase):
             {"count": 22, "ballot": ["a","c","d","b"]},
             {"count": 23, "ballot": ["a","b","c","d"]}
         ] 
-        output = AverageFit(ballots=input, candidate="d", k=60)
+        output = AverageFit(ballots=input, preferred_candidate="d", k=60)
 
         # Run test
         self.assertFalse(output)
@@ -31,7 +31,7 @@ class TestAverageFit(unittest.TestCase):
             {"count": 53, "ballot": ["a", "b", "j", "d", "g", "e", "h", "f", "c", "i"]},
             {"count": 72, "ballot": ["d", "c", "b", "a", "e", "h", "f", "i", "g", "j"]}
         ]  # "a" = 1143, "b" = 1136, "c" = 811, "d" = 1122, "e" = 702, "f" = 426, "g" = 415, "h" = 499, "i" = 170, "j" = 371
-        output = AverageFit(ballots=input, candidate="d", k=8)
+        output = AverageFit(ballots=input, preferred_candidate="d", k=8)
             # [["d","i","j","g","f","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"]]
             # "a" = 1143, "b" = 1144, "c" = 827, "d" = 1194, "e" = 726, "f" = 466, "g" = 463, "h" = 531, "i" = 234, "j" = 427
         # Run test
@@ -49,7 +49,7 @@ class TestAverageFit(unittest.TestCase):
             {"count": 2, "ballot": ["c","a","b","d"]}, 
             {"count": 2, "ballot": ["b","c","a","d"]}]
             # "a" = 6, "b" = 8, "c" = 10, "d" = 0
-        output = AverageFit(ballots=input, candidate="d", k=5)
+        output = AverageFit(ballots=input, preferred_candidate="d", k=5)
             # [["d","a","b","c"],["d","a","b","c"],["d","a","b","c"],["d","a","b","c"],["d","b","c","a"]]
             # "a" = 14, "b" = 13, "c" = 11, "d" = 15
         # Run tests
@@ -110,7 +110,7 @@ class TestLargestFit(unittest.TestCase):
             {"count": 22, "ballot": ["a","c","d","b"]},
             {"count": 23, "ballot": ["a","b","c","d"]}
         ]
-        output = LargestFit(ballots=input, candidate="d", k=60)
+        output = LargestFit(ballots=input, preferred_candidate="d", k=60)
 
         # Run test
         self.assertFalse(output)
@@ -123,7 +123,7 @@ class TestLargestFit(unittest.TestCase):
             {"count": 53, "ballot": ["a", "b", "j", "d", "g", "e", "h", "f", "c", "i"]},
             {"count": 72, "ballot": ["d", "c", "b", "a", "e", "h", "f", "i", "g", "j"]}
         ]   # "a" = 1143, "b" = 1136, "c" = 811, "d" = 1122, "e" = 702, "f" = 426, "g" = 415, "h" = 499, "i" = 170, "j" = 371
-        output = LargestFit(ballots=input, candidate="d", k=8)
+        output = LargestFit(ballots=input, preferred_candidate="d", k=8)
             # [["d","i","j","g","f","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"],["d","i","j","f","g","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"],["d","i","j","f","g","h","e","c","b","a"],["d","i","j","g","f","h","e","c","b","a"],["d","i","j","f","g","h","e","c","b","a"],["d","i","g","j","f","h","e","c","b","a"]]
             # "a" = 1143, "b" = 1144, "c" = 827, "d" = 1194, "e" = 726, "f" = 469, "g" = 461, "h" = 531, "i" = 234, "j" = 426
         # Run test
@@ -141,7 +141,7 @@ class TestLargestFit(unittest.TestCase):
             {"count": 2, "ballot": ["c","a","b","d"]}, 
             {"count": 2, "ballot": ["b","c","a","d"]}]
             # "a" = 6, "b" = 8, "c" = 10, "d" = 0
-        output = LargestFit(ballots=input, candidate="d", k=5)
+        output = LargestFit(ballots=input, preferred_candidate="d", k=5)
             # [["d","a","c","b"],["d","a","c","b"],["d","b","a","c"],["d","a","b","c"],["d","b","c","a"]]
         # Run tests
         self.assertEqual(len(output),5)
