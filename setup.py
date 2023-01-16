@@ -9,6 +9,7 @@ LICENSE = open(os.path.join(here, 'LICENSE.txt')).read()
 
 requires = [
     'python-graph-core >= 1.8.0',
+    'networkx >= 3.0',
 ]
 
 setup(name='python3-vote-core',

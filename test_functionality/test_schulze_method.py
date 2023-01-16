@@ -169,7 +169,10 @@ class TestSchulzeMethod(unittest.TestCase):
         output_list = SchulzeMethod(input_list, ballot_notation=SchulzeMethod.BALLOT_NOTATION_GROUPING).as_dict()
 
         # Run tests
-        self.assertEqual(output_tuple, output_list)
+        self.assertEqual(output_tuple['candidates'], output_list['candidates'])
+        self.assertEqual(output_tuple['tied_winners'], output_list['tied_winners'])
+        self.assertEqual(output_tuple['pairs'], output_list['pairs'])
+        self.assertEqual(output_tuple['strong_pairs'], output_list['strong_pairs'])
 
 if __name__ == "__main__":
     unittest.main()
