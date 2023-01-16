@@ -41,8 +41,8 @@ Methods implemented
 
 * Manipulation Algorithms
 
-  * Average Fit (coalition manipulation for Borda votting rule)
-  * Largest Fit (coalition manipulation for Borda votting rule)
+  * Average Fit (coalition manipulation heurestic for Borda votting rule)
+  * Largest Fit (coalition manipulation heurestic for Borda votting rule)
 
 Basic Usage
 -----------
