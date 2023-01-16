@@ -1,4 +1,17 @@
-
+# Copyright (C) 2023, Leora Schmerler
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .abstract_classes import MultipleWinnerVotingSystem
 from .common_functions import matching_keys, unique_permutations
@@ -57,16 +70,3 @@ class BordaAtLarge(MultipleWinnerVotingSystem):
         data = super(BordaAtLarge, self).as_dict()
         data["tallies"] = self.tallies
         return data
-
-
-# if __name__ == "__main__":
-#     output = BordaAtLarge([
-#             {"count": 30, "ballot": ["c1", "c4", "c2", "c3"]},
-#             {"count": 22, "ballot": ["c3", "c2", "c1", "c4"]},
-#             {"count": 22, "ballot": ["c1", "c4", "c3", "c2"]},
-#             {"count": 4, "ballot": ["c4", "c2", "c1", "c3"]},
-#             {"count": 8, "ballot": ["c2", "c3", "c1", "c4"]},
-#             {"count": 10, "ballot": ["c1", "c2", "c4", "c3"]}
-#         ], required_winners=2).as_dict()
-
-#     print(output)

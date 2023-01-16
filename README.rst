@@ -25,17 +25,24 @@ Methods implemented
   * Plurality (aka first-past-the-post or fptp)
   * Instant-Runoff Voting (aka IRV)
   * Schulze Method (aka Beatpath)
+  * Borda
 
 * Multiple Winner Methods
 
   * Plurality at large (aka block voting)
   * Single Transferable Vote (aka STV)
   * Schulze STV
+  * Borda at large 
 
 * Ordering Methods
 
   * Schulze Proportional Representation
   * Schulze Nonproportional Representation
+
+* Manipulation Algorithms
+
+  * Average Fit (coalition manipulation for Borda votting rule)
+  * Largest Fit (coalition manipulation for Borda votting rule)
 
 Basic Usage
 -----------
