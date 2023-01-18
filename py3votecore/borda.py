@@ -19,7 +19,18 @@ from .borda_at_large import BordaAtLarge
 class Borda(AbstractSingleWinnerVotingSystem):
 
     def __init__(self, ballots, tie_breaker=None):
+        """
+        The constructer accepts ballots of voters and a tie breaker if given.
+        >>> Borda([{ "count":3, "ballot":["A", "B", "C", "D"]},{ "count":2, "ballot":["D", "B", "A", "C"]},{ "count":2, "ballot":["D", "B", "C", "A"]}]) # doctest:+ELLIPSIS
+        <...>
+        >>> Borda([{ "count":3, "ballot":["A", "B", "C", "D"]},{ "count":2, "ballot":["D", "B", "A", "C"]},{ "count":2, "ballot":["D", "B", "C", "A"]}], tie_breaker=["A", "B", "C", "D"]) # doctest:+ELLIPSIS
+        <...>
+        """
         super(Borda, self).__init__(ballots, BordaAtLarge, tie_breaker=tie_breaker)
 
 
+if __name__ == '__main__':
+    import doctest
+    (failures, tests) = doctest.testmod(report=True)
+    print("{} failures, {} tests".format(failures, tests))
 

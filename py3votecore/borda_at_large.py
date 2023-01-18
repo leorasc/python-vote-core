@@ -19,10 +19,25 @@ import copy
 
 class BordaAtLarge(MultipleWinnerVotingSystem):
     
-    def __init__(self, ballots: dict, tie_breaker=None, required_winners: int=1):
+    def __init__(self, ballots: list, tie_breaker=None, required_winners: int=1):
+        """
+        The constructer accepts ballots of voters, a tie breaker if given and the number of required winners.
+        >>> BordaAtLarge([{ "count":3, "ballot":["A", "B", "C", "D"]},{ "count":2, "ballot":["D", "B", "A", "C"]},{ "count":2, "ballot":["D", "B", "C", "A"]}], required_winners = 2) # doctest:+ELLIPSIS
+        <...>
+        >>> BordaAtLarge([{ "count":3, "ballot":["A", "B", "C", "D"]},{ "count":2, "ballot":["D", "B", "A", "C"]},{ "count":2, "ballot":["D", "B", "C", "A"]}], tie_breaker=["A", "B", "C", "D"] ,required_winners = 2) # doctest:+ELLIPSIS
+        <...>
+        """
         super(BordaAtLarge, self).__init__(ballots, tie_breaker=tie_breaker, required_winners=required_winners)
 
     def calculate_results(self):
+        """
+        calculate_results accepts an instance of Borda, and is called from the constructor.
+        >>> BordaAtLarge([{ "count":3, "ballot":["A", "B", "C", "D"]},{ "count":2, "ballot":["D", "B", "A", "C"]},{ "count":2, "ballot":["D", "B", "C", "A"]}], tie_breaker=["A", "B", "C", "D"] ,required_winners = 2).calculate_results() # doctest:+ELLIPSIS
+        ...
+        >>> BordaAtLarge([{ "count":3, "ballot":["A", "B", "C", "D"]},{ "count":2, "ballot":["D", "B", "A", "C"]},{ "count":2, "ballot":["D", "B", "C", "A"]}], required_winners = 2).calculate_results() # doctest:+ELLIPSIS
+        ...
+        """
+
         # Standardize the ballot format and extract the candidates
         self.candidates = set()
         for ballot in self.ballots:
@@ -67,6 +82,19 @@ class BordaAtLarge(MultipleWinnerVotingSystem):
         self.winners = winning_candidates
 
     def as_dict(self):
+        """
+        as_dict accepts an instance of Borda, and returns a dict of the BordaAtLarge.
+        >>> BordaAtLarge([{ "count":3, "ballot":["A", "B", "C", "D"]},{ "count":2, "ballot":["D", "B", "A", "C"]},{ "count":2, "ballot":["D", "B", "C", "A"]}], tie_breaker=["A", "B", "C", "D"] ,required_winners = 2).as_dict() # doctest:+ELLIPSIS
+        {...}
+        >>> BordaAtLarge([{ "count":3, "ballot":["A", "C", "B", "D"]},{ "count":2, "ballot":["D", "B", "A", "C"]},{ "count":2, "ballot":["D", "B", "C", "A"]}], required_winners = 2).as_dict() # doctest:+ELLIPSIS
+        {...}
+        """
         data = super(BordaAtLarge, self).as_dict()
         data["tallies"] = self.tallies
         return data
+
+if __name__ == '__main__':
+    import doctest
+    (failures, tests) = doctest.testmod(report=True)
+    print("{} failures, {} tests".format(failures, tests))
+
